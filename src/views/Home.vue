@@ -7,8 +7,6 @@
                 <img class="logo-image" v-bind:src="'/static/img/logo3.png'">
                 <h1 class="hidden-sm-and-down">Fresh and Delicious</h1>
                 <p class="hidden-sm-and-down banner-description">Order your favourite dishes from different cuisines and have them delivered to your door in minutes</p>
-                <el-input class="search-box hidden-sm-and-down" placeholder="What do you want to eat?" v-model="input">
-                <el-button class="search-button hidden-sm-and-down" slot="append" icon="el-icon-search"></el-button></el-input>
             </div>
         </div>
         <h2 class="header-text">Food Delivery</h2>
@@ -29,7 +27,7 @@
             </div>
             </el-col>
         </el-row>
-        <h2 class="header-text">Our Offers</h2>
+        <h2 class="header-text">Items On Sale</h2>
         <div class="divider"></div>
         <ProductGrid v-bind:initialProducts="products" />
     </div>
@@ -45,9 +43,9 @@ export default {
     components: { ProductGrid },
     data() {
         return {
-            input: "",
             banner: 1,
             products: [],
+            cartNumber: 0,
         }
     },
     async mounted() {
@@ -62,7 +60,7 @@ export default {
         .then(res => {
             this.products = res.data;
         })
-    }
+    },
 }
 </script>
 
@@ -105,15 +103,6 @@ export default {
 
     .banner-description {
         font-size: 1.5rem;
-    }
-
-    .search-box {
-        font-size: 1.07rem !important;
-        width: 85% !important;
-    }
-
-    .search-box input {
-        height: 50px;
     }
 
     .el-input-group__append {

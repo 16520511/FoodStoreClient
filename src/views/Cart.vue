@@ -1,7 +1,7 @@
 <template>
     <div>
         <h2>SHOPPING CART</h2>
-        <el-row class="product-grid" gutter="50">
+        <el-row v-if="items.length != 0" class="product-grid" gutter="50">
         <el-col :sm="24" :md="17">
             <el-row v-if="items.length > 0" class="grid-header" gutter="0">
                 <el-col :span="5">
@@ -42,13 +42,15 @@
                     {{ item.quantity }} <i v-on:click="handleChangeQuantity(item.id, 'plus')" class="el-icon-circle-plus minus-button"></i></p>
                 </el-col>
                 <el-col :span="2">
-                    <p>${{ item.price }}</p>
+                    <p v-if="!item.onSale">${{ item.price }}</p>
+                    <p v-if="item.onSale">${{ item.salePrice }}</p>
                 </el-col>
                 <el-col :span="2">
-                    <p>${{ item.price*item.quantity }}</p>
+                    <p v-if="!item.onSale">${{ item.price*item.quantity }}</p>
+                    <p v-if="item.onSale">${{ item.salePrice*item.quantity }}</p>
                 </el-col>
                 <el-col :span="3">
-                    <p class="remove-button">Remove</p>
+                    <p v-on:click="deleteItem(item.id)" class="remove-button">Remove</p>
                 </el-col>
             </el-row>
             </div>
@@ -70,18 +72,19 @@
                     <h5>ORDER SUMMARY</h5>
                 </div>
                 <div class="order-summary-body">
-                    <p>Subtotal: </p>
-                    <p>Discounted: </p>
-                    <p>Delivering Fee: </p>
-                    <p>Tax: </p>
+                    <p>Subtotal: ${{total}}</p>
+                    <p>Discounted: $0</p>
+                    <p>Delivering Fee: $20</p>
+                    <p>Tax: ${{total*0.1}}</p>
                     <hr/>
-                    <h3>Total Cost: </h3>
+                    <h3>Total Cost: ${{Math.round(total*1.1)}}</h3>
                 </div>
             </div>
 
             <el-button v-on:click="toCheckOut" class="order-button" type="success">PROCEED TO CHECKOUT</el-button>
         </el-col>
         </el-row>
+        <h4 v-if="items.length == 0">You don't have any item in cart.</h4>
     </div>
 </template>
 
@@ -102,8 +105,24 @@ export default {
     mounted() {
         axios.get("/cart/cart-items", {
             withCredentials: true
-        }).then(res => this.items = res.data)
+        }).then(res => {
+            console.log(res.data);
+            this.items = res.data;
+        })
         .catch(err => console.log(err));
+    },
+    computed: {
+        total: function () {
+            let items = this.items;
+            let total = 0;
+            for (let i = 0; i < items.length; i++) {
+                let price = items[i].onSale ? items[i].salePrice : items[i].price;
+                price *= items[i].quantity;
+                total += price;
+            }
+
+            return total;
+        }
     },
     methods: {
         handleUpdateCart() {
@@ -130,7 +149,23 @@ export default {
                     if (action === "plus")
                         items[i].quantity++;
                     else if (action === "minus")
+                    {
                         items[i].quantity--;
+                        if (items[i].quantity == 0)
+                            items.splice(i, 1);
+                    }
+                    break;
+                }
+            
+            this.items = items;
+            this.handleUpdateCart();
+        },
+
+        deleteItem(productId) {
+            let items = [...this.items];
+            for (let i = 0; i < items.length; i++)
+                if (items[i].id === productId) {
+                    items.splice(i, 1);
                     break;
                 }
             
@@ -139,7 +174,7 @@ export default {
         },
 
         toCheckOut() {
-            this.$router.push('/checkout');
+            this.$router.push({ name: 'checkout', params: { total: this.total, items: this.items } });
         }
     }
 }

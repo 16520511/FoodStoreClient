@@ -1,7 +1,12 @@
 <template>
   <div id="app">
-    <NavBar />
-    <router-view  />
+    <div class="web-content">
+        <NavBar />
+        <router-view  />
+    </div>
+    <el-footer>
+        All Food Access © 2020
+    </el-footer>
   </div>
 </template>
 
@@ -31,6 +36,15 @@ export default {
 body {
     margin: 0;
     font-size: 1.2rem !important;
+    height: 100% !important;
+}
+
+#app, html {
+    height: 100% !important;
+}
+
+.web-content {
+    min-height: 100%;
 }
 
 .color-primary {
@@ -80,5 +94,10 @@ p {
 .grid-header .el-col h5,.header-bar h5 {
     margin: 1rem;
     text-align: center;
+}
+
+.el-footer {
+    background-color: rgb(221, 218, 218);
+    padding: 20px !important;
 }
 </style>

@@ -1,9 +1,10 @@
 <template>
     <div v-if="products.length > 0">
+    <div v-for="index in gridLength">
     <el-row class="product-grid" gutter="30">
         <el-col @mouseenter.native="showProductOverlay(product.id)" 
         @mouseleave.native="hideProductOverlay(product.id)" 
-        class="product" :md="4" :sm="12" v-for="product in products" :key="product.id">
+        class="product" :md="4" :sm="12" v-for="(product, pIndex) in products" :key="product.id" v-if="pIndex>=(index-1)*6 && pIndex<=(index-1)*6+5">
             <div class="product-overlay" :id="'product-overlay-' + product.id"></div>
             <el-button @click="handleAdddToCart(product.id)" class="add-to-cart-button color-primary" :id="'button-' + product.id" round>
                 <i class="el-icon-shopping-cart-full"></i> Add To Cart
@@ -17,6 +18,7 @@
         </el-col>
     </el-row>
     </div>
+    </div>
 </template>
 
 <script>
@@ -27,7 +29,8 @@ export default {
     props: ['initialProducts'],
     data: function () {
         return {
-            products: []
+            products: [],
+            gridLength: 0
         }
     },
     mounted() {
@@ -35,7 +38,10 @@ export default {
     },
     watch: {
         initialProducts: function (val) {
+            console.log(val);
             this.products = val;
+            this.gridLength = Math.ceil(val.length/6);
+            console.log(this.gridLength);
         },
     },
     methods: {

@@ -7,24 +7,17 @@
     text-color="#ff4100"
     active-text-color="red">
     <el-menu-item index="1"><a href="/"><i class="el-icon-s-home"></i></a></el-menu-item>
-    <el-menu-item index="2"><a href="/store">Store</a></el-menu-item>
-    <el-menu-item index="3"><a href="/news">News</a></el-menu-item>
-    <el-menu-item index="4"><a href="/promotion">Promotion</a></el-menu-item>
-    <el-submenu index="5">
-        <template slot="title">Menu</template>
-        <el-menu-item index="2-1">item one</el-menu-item>
-        <el-menu-item index="2-2">item two</el-menu-item>
-        <el-menu-item index="2-3">item three</el-menu-item>
-        <el-submenu index="2-4">
-        <template slot="title">item four</template>
-        <el-menu-item index="2-4-1">item one</el-menu-item>
-        <el-menu-item index="2-4-2">item two</el-menu-item>
-        <el-menu-item index="2-4-3">item three</el-menu-item>
-        </el-submenu>
-    </el-submenu>
-    <el-menu-item index="6" style="float: right"><a href="/cart"><el-badge :value="this.cartNumber" :max="9" class="cart"><i class="el-icon-shopping-cart-2"></i>Cart</el-badge></a></el-menu-item>
-    </el-menu>
+    <el-menu-item index="2-1"><a href="/category/france">France</a></el-menu-item>
+    <el-menu-item index="2-2"><a href="/category/italy">Italy</a></el-menu-item>
+    <el-menu-item index="2-3"><a href="/category/china">China</a></el-menu-item>
 
+
+    <el-input @keyup.enter.native="handleSearch" class="search-box hidden-sm-and-down" placeholder="What do you want to eat?" v-model="searchQuery">
+    <el-button @click="handleSearch" class="search-button hidden-sm-and-down" slot="append" icon="el-icon-search"></el-button></el-input>
+
+
+    <el-menu-item index="7" style="float: right"><a href="/cart"><el-badge :value="this.cartNumber" :max="9" class="cart"><i class="el-icon-shopping-cart-2"></i>Cart</el-badge></a></el-menu-item>
+    </el-menu>
 
     <el-button class="navbar-open-button hidden-md-and-up" v-on:click="handleOpenNavBar" icon="el-icon-menu"> Navigation</el-button>
     
@@ -72,6 +65,7 @@ export default {
         return {
             cartNumber: 0,
             isCollapse: true,
+            searchQuery: ""
         }
     },
     mounted() {
@@ -87,6 +81,9 @@ export default {
     methods: {
         handleOpenNavBar() {
             this.isCollapse = !this.isCollapse;
+        },
+        handleSearch() {
+            this.$router.push("/search?q=" + this.searchQuery);
         }
     },
 }
@@ -138,5 +135,15 @@ export default {
 
     .navbar-open-button i {
        color: orange;
+    }
+
+    .search-box {
+        font-size: 1.07rem !important;
+        margin: 10px 0;
+        width: 350px !important;
+    }
+
+    .search-box .el-input-group__append {
+        background-color: #ff4100 !important;
     }
 </style>
